@@ -24,11 +24,16 @@ sudo chmod +x cleanup.sh
 sudo vim /etc/netdata/netdata.conf
 #Ensure the [plugins] section is correctly set to monitor the required metrics
 #CPU, memory usage, and disk I/O
+[plugins]
+    cpu = yes
+    mem = yes
+    diskspace = yes
+    diskio = yes
 
-sudo systemctl restart netdata\
+sudo systemctl restart netdata
 
 #Find your ip address and access NetData dashboard
-curl -s ifconfig.me | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip addr show
 http://<your-server-ip>:19999
 ```
 
@@ -88,7 +93,6 @@ sudo systemctl restart netdata
 - Access NetData dashboard and ensure data is shown and alert is active
 ```bash
 #Find your ip address and access NetData dashboard
-curl -s ifconfig.me | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}'
 http://<your-server-ip>:19999
 ```
 ### Clean up Netdata from the system:

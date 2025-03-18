@@ -16,4 +16,7 @@ sudo rm -rf /etc/netdata
 echo "Checking if Netdata is still installed..."
 dpkg -l | grep netdata
 
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+
 echo "Cleanup complete!"
