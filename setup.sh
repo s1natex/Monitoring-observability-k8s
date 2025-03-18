@@ -17,5 +17,7 @@ sudo systemctl enable netdata
 echo "Checking Netdata service status..."
 sudo systemctl status netdata
 
-
+echo
+echo
+echo
 echo "NetData installation complete!"
