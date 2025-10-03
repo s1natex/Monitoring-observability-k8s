@@ -12,6 +12,14 @@ grafana:
     path: /
     pathType: Prefix
 
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+
 prometheus:
   ingress:
     enabled: true
@@ -21,3 +29,19 @@ prometheus:
     paths:
       - /
     pathType: Prefix
+
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false
+
+nodeExporter:
+  enabled: false
+
+kubelet:
+  serviceMonitor:
+    cAdvisor: true

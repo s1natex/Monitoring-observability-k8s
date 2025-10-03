@@ -83,6 +83,9 @@ helm repo update
 helm upgrade --install promstack prometheus-community/kube-prometheus-stack \
   --namespace utils --create-namespace \
   -f k8s/utils/monitoring/values-prom-stack.yaml
+
+kubectl -n utils rollout status deploy/promstack-kube-prometheus-operator
+kubectl -n utils get pods
 ```
 - Run Argo CD Application:
 ```
