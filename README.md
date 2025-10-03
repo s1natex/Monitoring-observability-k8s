@@ -69,6 +69,12 @@ kubectl -n utils rollout restart deploy argocd-server
 
 # Expose via Ingress:
 kubectl apply -f k8s/utils/ingress-utils.yaml
+
+# Point ArgoCD to correct NameSpace
+kubectl apply -f k8s/utils/argocd-rbac-fixes.yaml
+kubectl apply -f k8s/utils/argocd-webhook-rbac.yaml
+kubectl -n utils rollout restart statefulset argocd-application-controller || \
+kubectl -n utils rollout restart deploy argocd-application-controller
 ```
 - Install Prometheus & Grafana using Helm:
 ```

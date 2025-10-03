@@ -9,6 +9,8 @@ spec:
     repoURL: https://github.com/s1natex/Monitoring-observability-k8s
     targetRevision: main
     path: k8s
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: app

@@ -2,8 +2,7 @@ name: ci
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
     paths:
       - 'app/**'
   workflow_dispatch:
@@ -63,16 +62,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Compose up (build & run)
+      - name: Compose up (build & wait for health)
         working-directory: app
         run: |
+          set -euo pipefail
+
           docker compose up -d --build
-          # simple waits to let services boot
-          for p in 8080 8081 8082; do
-            for i in $(seq 1 30); do
-              curl -fsS "http://localhost:${p}/healthz" && break || sleep 2
+          docker compose ps
+
+          wait_port() {
+            local url="$1"; local name="$2"; local tries=60
+            echo "Waiting for ${name} at ${url} ..."
+            for i in $(seq 1 ${tries}); do
+              if curl -fsS "${url}" >/dev/null 2>&1; then
+                echo "OK: ${name}"
+                return 0
+              fi
+              sleep 2
             done
-          done
+            echo "ERROR: ${name} not ready after $((tries*2))s"
+            docker compose logs --no-color || true
+            return 1
+          }
+
+          wait_port "http://localhost:8080/healthz" "frontend-traffic"
+          wait_port "http://localhost:8081/healthz" "api-errors"
+          wait_port "http://localhost:8082/healthz" "api-latency"
 
       - name: Run smoke tests
         working-directory: app
@@ -89,7 +104,6 @@ jobs:
       # ---------- Build once, retag, push ----------
       - name: Build images (cached) for final tags
         run: |
-          # Build all images (cache from previous compose build will speed this up)
           docker build -t ${DOCKERHUB_REPO}:${FRONTEND_SVC}-${RELEASE_TAG} ./app/service-frontend-traffic
           docker build -t ${DOCKERHUB_REPO}:${ERRORS_SVC}-${RELEASE_TAG}   ./app/service-api-errors
           docker build -t ${DOCKERHUB_REPO}:${LATENCY_SVC}-${RELEASE_TAG}  ./app/service-api-latency
