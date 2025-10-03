@@ -4,24 +4,35 @@ from typing import Callable, Optional
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse, PlainTextResponse
-from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import (
+    Counter,
+    Histogram,
+    Gauge,
+    CollectorRegistry,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+)
 
 SERVICE_NAME = os.getenv("SERVICE_NAME", "api-errors")
 APP_PORT = int(os.getenv("APP_PORT", "8081"))
 
 app = FastAPI(title=SERVICE_NAME)
 
+REGISTRY = CollectorRegistry()
+
 REQ_COUNTER = Counter(
     "http_requests_total",
     "Total HTTP requests",
     ["service", "method", "route", "status"],
+    registry=REGISTRY,
 )
-INF_FLIGHT = Gauge("in_flight_requests", "In-flight requests", ["service"])
+INF_FLIGHT = Gauge("in_flight_requests", "In-flight requests", ["service"], registry=REGISTRY)
 REQ_LATENCY = Histogram(
     "http_request_duration_seconds",
     "Request latency seconds",
     ["service", "route", "method"],
     buckets=[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
+    registry=REGISTRY,
 )
 
 @app.middleware("http")
@@ -65,5 +76,5 @@ async def healthz():
 
 @app.get("/metrics")
 async def metrics():
-    data = generate_latest()
+    data = generate_latest(REGISTRY)
     return Response(content=data, media_type=CONTENT_TYPE_LATEST)
