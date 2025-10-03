@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-traffic
+  namespace: app
+  labels: { app: frontend-traffic }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: frontend-traffic }
+  template:
+    metadata:
+      labels: { app: frontend-traffic }
+    spec:
+      containers:
+      - name: frontend-traffic
+        image: s1natex/monitoring-observability-k8s:frontend-traffic-v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: SERVICE_NAME
+          value: "frontend-traffic"
+        readinessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        livenessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-errors
+  namespace: app
+  labels: { app: api-errors }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: api-errors }
+  template:
+    metadata:
+      labels: { app: api-errors }
+    spec:
+      containers:
+      - name: api-errors
+        image: s1natex/monitoring-observability-k8s:api-errors-v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081
+          name: http
+        env:
+        - name: SERVICE_NAME
+          value: "api-errors"
+        readinessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        livenessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-latency
+  namespace: app
+  labels: { app: api-latency }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: api-latency }
+  template:
+    metadata:
+      labels: { app: api-latency }
+    spec:
+      containers:
+      - name: api-latency
+        image: s1natex/monitoring-observability-k8s:api-latency-v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8082
+          name: http
+        env:
+        - name: SERVICE_NAME
+          value: "api-latency"
+        readinessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 2
+          periodSeconds: 5
+        livenessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi

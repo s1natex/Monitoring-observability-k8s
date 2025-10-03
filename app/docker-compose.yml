@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  frontend-traffic:
+    build:
+      context: ./service-frontend-traffic
+    container_name: frontend-traffic
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVICE_NAME=frontend-traffic
+      - APP_PORT=8080
+
+  api-errors:
+    build:
+      context: ./service-api-errors
+    container_name: api-errors
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVICE_NAME=api-errors
+      - APP_PORT=8081
+
+  api-latency:
+    build:
+      context: ./service-api-latency
+    container_name: api-latency
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVICE_NAME=api-latency
+      - APP_PORT=8082

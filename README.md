@@ -1,101 +1,132 @@
-# Simple-Monitoring
-A basic monitoring dashboard using Netdata
+# Monitoring and observability implementation Project
 
-## Project Page
-```
-https://roadmap.sh/projects/simple-monitoring-dashboard
-```
-# How to Use:
-- Install git and clone repository
-```
-git clone https://github.com/s1natex/Simple-Monitoring
-cd <to-repo-path>
-```
-- Grant permissions to setup.sh, test_dashboard.sh and cleanup.sh
-```bash
-sudo chmod +x setup.sh
-sudo chmod +x test_dashboard.sh
-sudo chmod +x cleanup.sh
-```
-- Run setup.sh and configure netdata.conf
-```bash
-./setup.sh
+## [Project Page](https://roadmap.sh/projects/simple-monitoring-dashboard)
 
-sudo vim /etc/netdata/netdata.conf
-#Ensure the [plugins] section is correctly set to monitor the required metrics
-#CPU, memory usage, and disk I/O
-[plugins]
-    cpu = yes
-    mem = yes
-    diskspace = yes
-    diskio = yes
 
-sudo systemctl restart netdata
 
-#Find your ip address and access NetData dashboard
-ip addr show
-http://<your-server-ip>:19999
+## Instructions to Run and Test:
+### Local Docker-Compose:
+- Using Docker Desktop Run:
 ```
+docker compose up --build
+```
+- Access each service with local Docker-Compose Run:
+    - **frontend traffic** -- `http://localhost:8080/` -- `/metrics`, `/healthz`
+    - **errors API** -- `http://localhost:8081/api` -- `/metrics`, `/healthz`
+    - **latency API** -- `http://localhost:8082/latency` -- `/metrics`, `/healthz`
+- Run Tests Locally Docker-Compose:
+```
+cd root
+python -m pip install -r requirements-dev.txt  # Install deps
 
-- Create a new chart configuration
-```bash
-sudo vim /etc/netdata/charts.d/custom_chart.conf
+cd app
+python -m pytest -q  # to run all of them
+
+# for smoke tests at runtime:
+python -m pytest -q tests/service-frontend-traffic/test_smoke_frontend_traffic.py \
+                   tests/service-api-errors/test_smoke_api_errors.py \
+                   tests/service-api-latency/test_smoke_api_latency.py
 ```
-- Add a custom chart configuration
+### Local Docker Desktop k8s Cluster:
+- Create namespaces:
 ```
-chart custom.system_usage '' "Custom System Usage" "Usage" "System" "line" 60000
-options base 1024
-dimension cpu_usage "CPU Usage" absolute 1 100
-dimension memory_usage "Memory Usage" absolute 1 100
+kubectl apply -f k8s/namespaces.yaml
 ```
-- Create a script to feed data to the chart
+- Install metrics-server:
 ```
-sudo vim /usr/lib/netdata/plugins.d/charts.d/custom_chart.sh
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```
+- Install ingress-nginx (ingress controller):
 ```
-#!/bin/bash
-while true; do
-  cpu=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
-  mem=$(free | awk '/Mem/{printf("%.2f", $3/$2 * 100)}')
-  echo "CHART custom.system_usage '' 'Custom System Usage' 'Usage' 'System' 'line' 60000"
-  echo "DIMENSION cpu_usage $cpu"
-  echo "DIMENSION memory_usage $mem"
-  sleep 10
-done
+kubectl create namespace ingress-nginx || true
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx \
+  --set controller.metrics.enabled=true
+
+# Verify the controller is ready
+kubectl wait -n ingress-nginx --for=condition=Available deploy/ingress-nginx-controller --timeout=180s
+kubectl get pods -n ingress-nginx -o wide
+kubectl get svc -n ingress-nginx
 ```
+- Deploy Cluster:
 ```
-sudo chmod +x /usr/lib/netdata/plugins.d/charts.d/custom_chart.sh
+kubectl apply -f k8s/apps/deployments.yaml
+kubectl apply -f k8s/apps/services.yaml
+kubectl apply -f k8s/apps/hpas.yaml
+kubectl apply -f k8s/apps/ingress-apps.yaml
 ```
+- Install and run Argo CD:
 ```
-sudo systemctl restart netdata
+kubectl apply -n utils -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Make the server run in HTTP mode (no TLS) for localhost:
+kubectl apply -f k8s/utils/argocd-cmd-params-cm.yaml
+
+# Restart Argo CD server to pick up the config:
+kubectl -n utils rollout restart deploy argocd-server
+
+# Expose via Ingress:
+kubectl apply -f k8s/utils/ingress-utils.yaml
 ```
-- Set Up an Alert for CPU Usage Above 80%
+- Install Prometheus & Grafana using Helm:
 ```
-sudo vim /etc/netdata/health.d/cpu.conf
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm upgrade --install promstack prometheus-community/kube-prometheus-stack \
+  --namespace utils --create-namespace \
+  -f k8s/utils/monitoring/values-prom-stack.yaml
 ```
+- Run Argo CD Application:
 ```
-alarm: high_cpu_usage
-  on: system.cpu
- lookup: average -1m
- units: %
- every: 10s
-  warn: $this > 80
-  info: CPU usage is above 80%.
-  to: sysadmin
+kubectl apply -f argocd/app.yaml
 ```
+- After Pods are Ready:
+##### **App**
 ```
-sudo systemctl restart netdata
+Frontend: http://localhost/ -- `/metrics`, `/healthz`
+Errors API: http://localhost/api -- `/metrics`, `/healthz`
+Latency API: http://localhost/latency -- `/metrics`, `/healthz`
 ```
-- Run stress test
+##### **Prometheus and Grafana**
 ```
-./test_dashboard.sh
+Prometheus: http://prometheus.localhost/
+Grafana: http://grafana.localhost/
+
+# admin / admin
 ```
-- Access NetData dashboard and ensure data is shown and alert is active
-```bash
-#Find your ip address and access NetData dashboard
-http://<your-server-ip>:19999
+##### **Argo CD**
 ```
-### Clean up Netdata from the system:
-```bash
-./cleanup.sh
+http://argocd.localhost/
+
+# admin
+# password
+kubectl -n utils get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+```
+- Clean Up:
+```
+# Remove app + utils workloads
+kubectl delete -f k8s/apps/ingress-apps.yaml
+kubectl delete -f k8s/apps/hpas.yaml
+kubectl delete -f k8s/apps/services.yaml
+kubectl delete -f k8s/apps/deployments.yaml
+
+# Remove Argo CD app, ingress
+kubectl delete -f argocd/app.yaml --ignore-not-found
+kubectl delete -f k8s/utils/ingress-utils.yaml --ignore-not-found
+kubectl delete -n utils -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Remove prometheus stack
+helm uninstall promstack -n utils
+
+# Remove ingress-nginx
+helm uninstall ingress-nginx -n ingress-nginx
+kubectl delete ns ingress-nginx --ignore-not-found
+
+# Remove metrics-server
+kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+# namespaces
+kubectl delete ns app utils
 ```
