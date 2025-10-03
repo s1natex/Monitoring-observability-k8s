@@ -44,6 +44,11 @@ helm repo update
 helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
   --namespace ingress-nginx \
   --set controller.metrics.enabled=true
+
+# Verify the controller is ready
+kubectl wait -n ingress-nginx --for=condition=Available deploy/ingress-nginx-controller --timeout=180s
+kubectl get pods -n ingress-nginx -o wide
+kubectl get svc -n ingress-nginx
 ```
 - Deploy Cluster:
 ```

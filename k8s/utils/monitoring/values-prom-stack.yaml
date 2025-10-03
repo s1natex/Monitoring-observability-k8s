@@ -13,17 +13,11 @@ grafana:
     pathType: Prefix
 
 prometheus:
-  enabled: true
-
-prometheus:
-  server:
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      hosts:
-        - prometheus.localhost
-      paths:
-        - /
-      pathType: Prefix
-    service:
-      type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.localhost
+    paths:
+      - /
+    pathType: Prefix
