@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-prometheus
+  namespace: utils
+  labels:
+    grafana_datasource: "1"     # watched by kube-prometheus-stack sidecar
+data:
+  prometheus-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        url: http://promstack-kube-prometheus-prometheus:9090
+        access: proxy
+        isDefault: true
+        editable: false

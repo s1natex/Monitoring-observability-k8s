@@ -43,5 +43,14 @@ nodeExporter:
   enabled: false
 
 kubelet:
+  enabled: true
   serviceMonitor:
+    https: true
     cAdvisor: true
+    probes: true
+    resource: true
+
+    # IMPORTANT: stop dropping cAdvisor/container metrics
+    metricRelabelings: []             # applies to the main kubelet endpoint
+    cAdvisorMetricRelabelings: []     # applies to /metrics/cadvisor
+

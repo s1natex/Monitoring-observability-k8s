@@ -104,6 +104,7 @@ Prometheus: http://prometheus.localhost/
 Grafana: http://grafana.localhost/
 
 # admin / admin
+# Grafana "app-all-in-one-dashboard" to see main dashboard(Dashboards -- New -- import -- use ./k8s/utils/monitoring/dashboards/app-all-in-one.json)
 ```
 ##### **Argo CD**
 ```
@@ -120,7 +121,7 @@ kubectl apply -f k8s/utils/monitoring/servicemonitors.yaml
 kubectl apply -f k8s/utils/monitoring/prometheusrule-app-alerts.yaml
 kubectl apply -f k8s/utils/monitoring/alertmanager-config.yaml
 kubectl apply -f k8s/utils/monitoring/grafana-dashboard.yaml
-kubectl apply -f k8s/utils/monitoring/grafana-dashboard-all-in-one.yaml
+kubectl apply -f k8s/utils/monitoring/grafana-datasource.yaml
 ```
 ### if metrics-server isn’t Ready -- Patch:
 ```

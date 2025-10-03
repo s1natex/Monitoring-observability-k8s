@@ -17,14 +17,31 @@ spec:
     - port: http
       path: /metrics
       interval: 5s
-      scheme: http
       metricRelabelings:
+        # add a stable "service" label based on the scrape job
         - sourceLabels: [job]
           targetLabel: service
-        - sourceLabels: [status]
-          regex: ""
-          action: keep
+          action: replace
+        # copy HTTP code -> status so dashboards can match {status=~"5.."}
         - sourceLabels: [code]
           targetLabel: status
           action: replace
-          regex: "(.+)"
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: promstack-kube-state-metrics
+  namespace: utils
+  labels:
+    release: promstack
+spec:
+  namespaceSelector:
+    matchNames: ["utils"]
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kube-state-metrics
+      app.kubernetes.io/instance: promstack
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
