@@ -71,7 +71,7 @@ jobs:
           docker compose ps
 
           wait_port() {
-            local url="$1"; local name="$2"; local tries=60
+            local url="$1"; local name="$2"; local tries=90
             echo "Waiting for ${name} at ${url} ..."
             for i in $(seq 1 ${tries}); do
               if curl -fsS "${url}" >/dev/null 2>&1; then
@@ -81,8 +81,11 @@ jobs:
               sleep 2
             done
             echo "ERROR: ${name} not ready after $((tries*2))s"
+            echo "=== docker compose ps ==="
+            docker compose ps || true
+            echo "=== docker compose logs ==="
             docker compose logs --no-color || true
-            return 1
+            exit 1
           }
 
           wait_port "http://localhost:8080/healthz" "frontend-traffic"
