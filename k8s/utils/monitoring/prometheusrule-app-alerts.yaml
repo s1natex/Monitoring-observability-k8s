@@ -1,0 +1,62 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: app-alerts
+  namespace: utils
+  labels:
+    release: promstack   # picked up by the chart's Prometheus
+spec:
+  groups:
+    - name: app.rules
+      interval: 5s
+      rules:
+        # ---- Traffic (RPS)
+        - alert: HighTraffic
+          expr: |
+            sum by (service) (rate(http_requests_total[1m])) > 100
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High traffic on {{ $labels.service }}"
+            description: "RPS > 100 for 2m (current: {{ $value }})"
+
+        # ---- Errors (5xx error rate > 5%)
+        - alert: HighErrorRate
+          expr: |
+            (
+              sum by (service) (rate(http_requests_total{status=~"5.."}[5m]))
+              /
+              sum by (service) (rate(http_requests_total[5m]))
+            ) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate on {{ $labels.service }}"
+            description: "5xx > 5% over 5m"
+
+        # ---- Latency (p95 > 500ms)
+        - alert: HighLatencyP95
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum by (service, le) (rate(http_request_duration_seconds_bucket[5m]))
+            ) > 0.5
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High latency p95 on {{ $labels.service }}"
+            description: "p95 > 500ms for 5m (current: {{ $value }}s)"
+
+        # ---- Saturation (in-flight requests gauge)
+        - alert: HighSaturation
+          expr: |
+            max by (service) (in_flight_requests) > 50
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High saturation on {{ $labels.service }}"
+            description: "In-flight requests > 50 for 5m"

@@ -5,6 +5,7 @@ metadata:
   namespace: app
   labels: { app: frontend-traffic }
 spec:
+  revisionHistoryLimit: 1
   replicas: 1
   selector:
     matchLabels: { app: frontend-traffic }
@@ -45,6 +46,7 @@ metadata:
   namespace: app
   labels: { app: api-errors }
 spec:
+  revisionHistoryLimit: 1
   replicas: 1
   selector:
     matchLabels: { app: api-errors }
@@ -85,6 +87,7 @@ metadata:
   namespace: app
   labels: { app: api-latency }
 spec:
+  revisionHistoryLimit: 1
   replicas: 1
   selector:
     matchLabels: { app: api-latency }

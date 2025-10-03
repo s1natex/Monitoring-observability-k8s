@@ -110,6 +110,29 @@ http://argocd.localhost/
 # password
 kubectl -n utils get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
+- Apply Prometheus, Grafana and alertmanager configs:
+```
+# Apply
+kubectl apply -f k8s/utils/monitoring/servicemonitors.yaml
+kubectl apply -f k8s/utils/monitoring/prometheusrule-app-alerts.yaml
+kubectl apply -f k8s/utils/monitoring/alertmanager-config.yaml
+kubectl apply -f k8s/utils/monitoring/grafana-dashboard.yaml
+kubectl apply -f k8s/utils/monitoring/grafana-dashboard-all-in-one.yaml
+```
+### if metrics-server isn’t Ready -- Patch:
+```
+kubectl -n kube-system patch deploy metrics-server --type=json \
+  -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+
+kubectl -n kube-system patch deploy metrics-server --type=json \
+  -p='[{"op":"add","path":"/spec/template/spec/containers/0/ports","value":[{"containerPort":10250,"name":"https"}]}]'
+
+kubectl -n kube-system rollout status deploy/metrics-server
+kubectl -n kube-system get pods -l k8s-app=metrics-server -o wide
+kubectl get apiservices | grep metrics
+kubectl top nodes
+kubectl top pods -A
+```
 - Clean Up:
 ```
 # Remove app + utils workloads

@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: app-services
+  namespace: utils
+  labels:
+    release: promstack
+spec:
+  namespaceSelector:
+    matchNames: ["app"]
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: [frontend-traffic, api-errors, api-latency]
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 5s
+      scheme: http
+      metricRelabelings:
+        - sourceLabels: [job]
+          targetLabel: service
+        - sourceLabels: [status]
+          regex: ""
+          action: keep
+        - sourceLabels: [code]
+          targetLabel: status
+          action: replace
+          regex: "(.+)"

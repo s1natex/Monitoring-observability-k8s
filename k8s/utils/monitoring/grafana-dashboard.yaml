@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-observability-dashboard
+  namespace: utils
+  labels:
+    grafana_dashboard: "1"
+data:
+  app-observability.json: |
+    {
+      "title": "App Observability (RED/USE)",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "5s",
+      "tags": ["app", "demo"],
+      "panels": [
+        {
+          "type": "stat",
+          "title": "RPS (total)",
+          "targets": [
+            { "expr": "sum(rate(http_requests_total[1m]))" }
+          ]
+        },
+        {
+          "type": "timeSeries",
+          "title": "RPS by service",
+          "targets": [
+            { "expr": "sum by (service) (rate(http_requests_total[1m]))" }
+          ]
+        },
+        {
+          "type": "timeSeries",
+          "title": "5xx error rate by service",
+          "targets": [
+            {
+              "expr": "(sum by (service) (rate(http_requests_total{status=~\"5..\"}[5m])) / sum by (service) (rate(http_requests_total[5m]))) * 100"
+            }
+          ],
+          "fieldConfig": { "defaults": { "unit": "percent" } }
+        },
+        {
+          "type": "timeSeries",
+          "title": "Latency p95 (s) by service",
+          "targets": [
+            { "expr": "histogram_quantile(0.95, sum by (service, le) (rate(http_request_duration_seconds_bucket[5m])))" }
+          ]
+        },
+        {
+          "type": "timeSeries",
+          "title": "In-flight requests (saturation)",
+          "targets": [
+            { "expr": "max by (service) (in_flight_requests)" }
+          ]
+        }
+      ],
+      "templating": {
+        "list": [
+          {
+            "type": "query",
+            "name": "service",
+            "label": "Service",
+            "datasource": {"type":"prometheus", "uid":"prometheus"},
+            "query": "label_values(http_requests_total, service)",
+            "refresh": 1,
+            "includeAll": true
+          }
+        ]
+      }
+    }
