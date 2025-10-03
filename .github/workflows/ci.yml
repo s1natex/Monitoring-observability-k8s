@@ -25,13 +25,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ---------- Compute Israel time & release tag ----------
+    # ---------- Compute Israel time & release tag ----------
       - name: Compute release tag (Asia/Jerusalem)
         run: |
-          echo "DATEISR=$(TZ=Asia/Jerusalem date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
-          echo "SHORTSHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-          echo "RELEASE_TAG=${DATEISR}-${SHORTSHA}" >> $GITHUB_ENV
-          echo "RELEASE_TAG=$RELEASE_TAG"
+            echo "RELEASE_TAG=$(TZ=Asia/Jerusalem date +'%Y%m%d-%H%M')-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Check RELEASE_TAG
+        run: |
+            echo "RELEASE_TAG=${RELEASE_TAG}"
+            test -n "${RELEASE_TAG}" && test "${RELEASE_TAG}" != "-"
 
       # ---------- Python deps & Unit tests ----------
       - name: Set up Python
