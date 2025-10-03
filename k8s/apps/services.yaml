@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-traffic
+  namespace: app
+  labels: { app: frontend-traffic }
+spec:
+  selector: { app: frontend-traffic }
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-errors
+  namespace: app
+  labels: { app: api-errors }
+spec:
+  selector: { app: api-errors }
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-latency
+  namespace: app
+  labels: { app: api-latency }
+spec:
+  selector: { app: api-latency }
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8082
