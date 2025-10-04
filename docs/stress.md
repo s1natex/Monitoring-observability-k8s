@@ -1,6 +1,6 @@
-### Stress Test Python Script:
+- ### Cluster Stress Test with a Python Script:
 ```
-cd ./stress-test
+cd ./stress-test/
 
 python app_ingress_load.py \
   --duration 120 \
@@ -12,5 +12,6 @@ python app_ingress_load.py \
   --errors   http://localhost/api \
   --latency  http://localhost/latency
 
-# Watch Grafana Dashboard for reaction
+# Watch CLI for script results print
+# Watch Grafana Dashboard for Live Dashboard reaction
 ```

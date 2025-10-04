@@ -1,13 +1,13 @@
 ## Local Docker-Compose start up and test:
-### - Using Docker Desktop Run:
+- ### Using Docker Desktop Run:
 ```
 docker compose up --build
 ```
-### - Access each service with local Docker-Compose Run:
-- **frontend traffic** -- `http://localhost:8080/` -- `/metrics`, `/healthz`
-- **errors API** -- `http://localhost:8081/api` -- `/metrics`, `/healthz`
-- **latency API** -- `http://localhost:8082/latency` -- `/metrics`, `/healthz`
-### - Run Tests Locally Docker-Compose:
+- ### Access each service with local Docker-Compose build:
+    - **frontend traffic** -- `http://localhost:8080/` -- `/metrics`, `/healthz`
+    - **errors API** -- `http://localhost:8081/api` -- `/metrics`, `/healthz`
+    - **latency API** -- `http://localhost:8082/latency` -- `/metrics`, `/healthz`
+- ### Run Tests Locally on Docker-Compose build:
 ```
 cd root
 python -m pip install -r requirements-dev.txt  # Install deps

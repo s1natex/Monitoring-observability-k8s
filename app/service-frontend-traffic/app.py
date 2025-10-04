@@ -65,7 +65,7 @@ async def index():
       <head><title>{SERVICE_NAME}</title></head>
       <body>
         <h1>{SERVICE_NAME}</h1>
-        <p>Metrics at <code>/metrics</code>, health at <code>/healthz</code>.test(1)</p>
+        <p>Metrics at <code>/metrics</code>, health at <code>/healthz</code>.test!</p>
       </body>
     </html>
     """
