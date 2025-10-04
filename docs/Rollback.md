@@ -1,0 +1,16 @@
+## MANUAL ROLLBACK PROCEDURES
+- ### Rollback using ArgoCD UI:
+    - Open the ArgoCD web interface (http://argocd.localhost/)
+    - Navigate to the application you want to roll back
+    - Check the application history tab; it lists past syncs with commit IDs and image tags
+    - Select the previous healthy revision from the history list
+    - Click "Rollback" or "Sync to this revision"
+    - Argo CD reverts manifests and redeploys pods to the chosen version
+    - Verify rollout status: all workloads should return to Healthy/Synced
+---
+- ### Rollback using Git:
+    - In local repo, revert the image tag change in k8s/apps/deployments.yaml to the previous Docker image tag
+    - Commit the change with a clear message ("Rollback to previous release -- {image and Tag}")
+    - Commit and Push to the main branch on GitHub
+    - Argo CD detects the manifest change and auto-syncs the cluster
+    - Verify the pods redeploy with the old tags and dashboards return to baseline

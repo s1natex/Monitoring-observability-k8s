@@ -94,13 +94,13 @@ kubectl get pods -A
 ```
 - ### After Pods are Ready access on browser:
 ##### **App**
-- Frontend: `http://localhost/` -- `/metrics`, `/healthz`
-- Errors API: `http://localhost/api` -- `/metrics`, `/healthz`
-- Latency API: `http://localhost/latency` -- `/metrics`, `/healthz`
-##### **Prometheus and Grafana**
-- Prometheus: `http://prometheus.localhost/`
-- Prometheus Alerts: `http://prometheus.localhost/alerts`
-- Grafana: `http://grafana.localhost/`
+- **Frontend**: `http://localhost/` -- `/metrics`, `/healthz`
+- **Errors API**: `http://localhost/api` -- `/metrics`, `/healthz`
+- **Latency API**: `http://localhost/latency` -- `/metrics`, `/healthz`
+##### **Prometheus, Alerts and Grafana**
+- **Prometheus**: `http://prometheus.localhost/`
+- **Prometheus Alerts**: `http://prometheus.localhost/alerts`
+- **Grafana**: `http://grafana.localhost/`
 ```
 # Grafana default access: admin / admin
 # Apply manualy Grafana main custom dashboard using json file (Dashboards -- New -- import -- use: ./k8s/utils/monitoring/dashboards/app-all-in-one.json)
