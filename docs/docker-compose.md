@@ -1,4 +1,4 @@
-## Local Docker-Compose start up  and test:
+## Local Docker-Compose start up and test:
 ### - Using Docker Desktop Run:
 ```
 docker compose up --build

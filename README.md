@@ -1,23 +1,10 @@
 # Monitoring and observability implementation Project
-
+[![CI](https://github.com/s1natex/monitoring-observability-k8s/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/s1natex/monitoring-observability-k8s/actions/workflows/ci.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/s1natex/monitoring-observability-k8s.svg)](https://hub.docker.com/r/s1natex/monitoring-observability-k8s)
 ## [Project Page](https://roadmap.sh/projects/simple-monitoring-dashboard)
 
 ## Instructions to Run and Test:
-
-
-### Stress Test Python Script:
-```
-cd ./stress-test
-
-python app_ingress_load.py \
-  --duration 120 \
-  --rps 40 \
-  --mix 0.5 0.25 0.25 \
-  --error-rate 0.15 --error-5xx-code 500 \
-  --latency-ms 10 300 --latency-code 200 \
-  --frontend http://localhost \
-  --errors   http://localhost/api \
-  --latency  http://localhost/latency
-
-# Watch Grafana Dashboard for reaction
-```
+- [Local Docker-Compose start up and test](./docs/docker-compose.md)
+- [Local Docker Desktop k8s Cluster](./docs/k8s.md)
+- [Stress Test for the Cluster](./docs/stress.md)
+- [Screenshot Validation](./docs/Screenshots.md)
