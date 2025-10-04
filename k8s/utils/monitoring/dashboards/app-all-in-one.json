@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 22,
   "links": [],
   "panels": [
     {
@@ -864,6 +864,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -942,13 +946,17 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "expr": "kube_deployment_status_replicas{namespace=\"app\"}",
+          "editorMode": "code",
+          "expr": "kube_deployment_status_replicas",
           "legendFormat": "{{deployment}} replicas",
+          "range": true,
           "refId": "A"
         },
         {
-          "expr": "sum by (pod) (kube_pod_container_status_restarts_total{namespace=\"app\"})",
+          "editorMode": "code",
+          "expr": "sum by (pod) (kube_pod_container_status_restarts_total)",
           "legendFormat": "{{pod}} restarts",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -1075,15 +1083,14 @@
   "preload": false,
   "refresh": "5s",
   "schemaVersion": 41,
-  "tags": [
-    "app",
-    "demo",
-    "RED",
-    "USE"
-  ],
+  "tags": [],
   "templating": {
     "list": [
       {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "prometheus"
@@ -1091,6 +1098,7 @@
         "includeAll": true,
         "label": "Service",
         "name": "service",
+        "options": [],
         "query": "label_values(http_requests_total, service)",
         "refresh": 1,
         "type": "query"
@@ -1102,14 +1110,45 @@
         },
         "label": "Rate window",
         "name": "rate",
+        "options": [
+          {
+            "selected": false,
+            "text": "15s",
+            "value": "15s"
+          },
+          {
+            "selected": false,
+            "text": "30s",
+            "value": "30s"
+          },
+          {
+            "selected": true,
+            "text": "1m",
+            "value": "1m"
+          },
+          {
+            "selected": false,
+            "text": "2m",
+            "value": "2m"
+          },
+          {
+            "selected": false,
+            "text": "5m",
+            "value": "5m"
+          }
+        ],
         "query": "15s,30s,1m,2m,5m",
         "type": "interval"
       }
     ]
   },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
   "timepicker": {},
   "timezone": "browser",
-  "title": "App – All-in-One (Traffic • Errors • Latency • Saturation)",
-  "uid": "108fbdf9-0752-4aa3-be50-9d98fd100be0",
+  "title": "Main-Dashboard",
+  "uid": "ec87fb17-6eeb-4b70-8e79-35ace0560e6b",
   "version": 1
 }
