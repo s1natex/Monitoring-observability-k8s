@@ -22,7 +22,3 @@ python -m pytest -q tests/service-frontend-traffic/test_smoke_frontend_traffic.p
                    tests/service-api-errors/test_smoke_api_errors.py \
                    tests/service-api-latency/test_smoke_api_latency.py
 ```
-- ### CleanUp:
-```
-docker compose down
-```
