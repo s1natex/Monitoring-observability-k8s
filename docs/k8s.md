@@ -136,6 +136,6 @@ kubectl delete ns ingress-nginx --ignore-not-found
 # Remove metrics-server
 kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
-# namespaces
+# Remove namespaces
 kubectl delete ns app utils
 ```

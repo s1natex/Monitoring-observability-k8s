@@ -34,7 +34,7 @@ Prometheus, and Grafana integration
 ---
 ### CI/CD OVERVIEW
 - GitOps Driven ArgoCD and GitHub Actions ensures an automated E2E CI/CD Pipeline
-- GitHub Actions CI Runs `UnitTests` -- `Runs Docker Compose` -- `Runs Smoke Tests` -- `Build, Publish,Tag and push the final image to DockerHub` -- `Updates manifests and commits back`
+- GitHub Actions CI Runs `UnitTests` -- `Runs Docker Compose` and `Smoke Tests` -- `Build, Tag and Push the final image to DockerHub` -- `Updates manifests and commits back to Repository`
 - The cluster state remains synced with the repository using ArgoCD, offering visual feedback, version tracking, and hands-free continuous delivery across all components
 ---
 # Instructions to Run and Test:

@@ -14,7 +14,7 @@ python -m pip install -r requirements-dev.txt
 
 cd ./app/
 
-# to run all tests
+# Run all tests
 python -m pytest -q
 
 # Run Only smoke tests at runtime:
