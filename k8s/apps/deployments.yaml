@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend-traffic
-        image: s1natex/monitoring-observability-k8s:frontend-traffic-20251004-1933-b076a20
+        image: s1natex/monitoring-observability-k8s:frontend-traffic-20251004-1956-9d52cbc
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
       - name: api-errors
-        image: s1natex/monitoring-observability-k8s:api-errors-20251004-1933-b076a20
+        image: s1natex/monitoring-observability-k8s:api-errors-20251004-1956-9d52cbc
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081
@@ -97,7 +97,7 @@ spec:
     spec:
       containers:
       - name: api-latency
-        image: s1natex/monitoring-observability-k8s:api-latency-20251004-1933-b076a20
+        image: s1natex/monitoring-observability-k8s:api-latency-20251004-1956-9d52cbc
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8082
