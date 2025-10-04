@@ -109,12 +109,11 @@ kubectl get pods -A
 ```
 http://argocd.localhost/
 ```
-- ArgoCD Login:
 ```
 # user: admin
 # password: kubectl -n utils get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
-### - Clean Up:
+- ### Clean Up:
 ```
 # Remove app + utils workloads
 kubectl delete -f k8s/apps/ingress-apps.yaml

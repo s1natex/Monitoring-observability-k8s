@@ -9,13 +9,15 @@ docker compose up --build
     - **latency API** -- `http://localhost:8082/latency` -- `/metrics`, `/healthz`
 - ### Run Tests Locally on Docker-Compose build:
 ```
-cd root
-python -m pip install -r requirements-dev.txt  # Install deps
+# Install deps from root folder
+python -m pip install -r requirements-dev.txt
 
-cd app
-python -m pytest -q  # to run all tests
+cd ./app/
 
-# for smoke tests at runtime:
+# to run all tests
+python -m pytest -q
+
+# Run Only smoke tests at runtime:
 python -m pytest -q tests/service-frontend-traffic/test_smoke_frontend_traffic.py \
                    tests/service-api-errors/test_smoke_api_errors.py \
                    tests/service-api-latency/test_smoke_api_latency.py
