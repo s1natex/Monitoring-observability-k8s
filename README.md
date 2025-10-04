@@ -45,3 +45,7 @@ Prometheus, and Grafana integration
 - ### [Project Screenshot Validation](./docs/Screenshots.md)
 # Project Diagram:
 ![System](./media/systemdiagram.png)
+# Grafana Dashboard after stress tests and ArgoCD sync in progress:
+![argocdsyncinprogress](./media/argocdsyncinprogress.png)
+![dashboardatstress](./media/dashboardatstress.png)
+![dashboardatstress2](./media/dashboardatstress2.png)
