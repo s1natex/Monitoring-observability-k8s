@@ -10,7 +10,6 @@ spec:
     targetRevision: main
     path: k8s
     directory:
-      exclude: '{**/*.json,**/*.md}'
       recurse: true
   destination:
     server: https://kubernetes.default.svc
