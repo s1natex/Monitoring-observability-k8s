@@ -4,28 +4,24 @@ metadata:
   name: app-services
   namespace: utils
   labels:
-    release: promstack
+    release: promstack  # must match your Prometheus serviceMonitorSelector
 spec:
   namespaceSelector:
-    matchNames: ["app"]
+    matchNames: ["app"]  # scrape Services in the "app" namespace
   selector:
     matchExpressions:
       - key: app
         operator: In
-        values: [frontend-traffic, api-errors, api-latency]
+        values:
+          - frontend-traffic
+          - api-errors
+          - api-latency
   endpoints:
-    - port: http
+    - port: http          # MUST match the Service port name
       path: /metrics
       interval: 5s
-      metricRelabelings:
-        # add a stable "service" label based on the scrape job
-        - sourceLabels: [job]
-          targetLabel: service
-          action: replace
-        # copy HTTP code -> status so dashboards can match {status=~"5.."}
-        - sourceLabels: [code]
-          targetLabel: status
-          action: replace
+      scheme: http
+
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
