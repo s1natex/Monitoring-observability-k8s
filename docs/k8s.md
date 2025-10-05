@@ -136,7 +136,8 @@ kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/lat
 
 # Remove namespaces
 kubectl delete ns app utils
-
+```
+```
 # Check for any Leftovers
 kubectl get all --all-namespaces
 
