@@ -105,10 +105,9 @@ kubectl get pods -A
 # Grafana default access: admin / admin
 # Apply manualy Grafana main custom dashboard using a `.json` file (Dashboards -- New -- import -- use: ./k8s/utils/monitoring/dashboards/app-all-in-one.json)
 ```
-##### **Argo CD**
+##### **ArgoCD**
+- **ArgoCD**: `http://argocd.localhost/`
 ```
-http://argocd.localhost/
-
 # user: admin
 # password: kubectl -n utils get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
