@@ -136,4 +136,13 @@ kubectl delete -f https://github.com/kubernetes-sigs/metrics-server/releases/lat
 
 # Remove namespaces
 kubectl delete ns app utils
+
+# Check for any Leftovers
+kubectl get all --all-namespaces
+
+# If Headless "promstack-kube-prometheus-kubelet" service exists
+kubectl -n kube-system delete service promstack-kube-prometheus-kubelet
+
+# Check for any Leftovers(again)
+kubectl get all --all-namespaces
 ```
