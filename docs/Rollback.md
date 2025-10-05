@@ -1,4 +1,4 @@
-## MANUAL ROLLBACK PROCEDURES
+## Manual Rollback Procedures for the k8s Cluster:
 - ### Rollback using ArgoCD UI:
     - Open the ArgoCD web interface (http://argocd.localhost/)
     - Navigate to the application you want to roll back

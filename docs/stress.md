@@ -1,4 +1,4 @@
-- ### Cluster Stress Test with a Python Script:
+- ### Stress Test for the k8s Cluster:
 ```
 cd ./stress-test/
 
@@ -15,7 +15,7 @@ python app_ingress_load.py \
 # Watch CLI for script results print
 # Watch Grafana Dashboard for Live Dashboard reaction
 ```
-- ### If needed generate 5xx errors for dashboards tests:
+- ### If needed generate 5xx errors for dashboard tests:
 ```
 curl -i "http://localhost/api?code=500"
 curl -s -o /dev/null -w "%{http_code}\n" "http://localhost/api?code=500"

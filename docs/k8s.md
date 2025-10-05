@@ -1,4 +1,4 @@
-## Local Docker Desktop k8s Cluster
+## Local Manual Docker-Desktop k8s Cluster Deployment:
 - ### Create namespaces:
 ```
 kubectl apply -f k8s/namespaces.yaml
@@ -7,7 +7,7 @@ kubectl apply -f k8s/namespaces.yaml
 ```
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```
-- ### Install ingress-nginx(ingress controller):
+- ### Install ingress-nginx(Controller):
 ```
 kubectl create namespace ingress-nginx || true
 
@@ -29,7 +29,7 @@ kubectl apply -f k8s/apps/services.yaml
 kubectl apply -f k8s/apps/hpas.yaml
 kubectl apply -f k8s/apps/ingress-apps.yaml
 ```
-- ### Install and run Argo CD:
+- ### Install and Run Argo CD:
 ```
 kubectl apply -n utils -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
@@ -59,7 +59,7 @@ helm upgrade --install promstack prometheus-community/kube-prometheus-stack \
 kubectl -n utils rollout status deploy/promstack-kube-prometheus-operator
 kubectl -n utils get pods
 ```
-- ### Apply Prometheus, Grafana and alertmanager configs:
+- ### Apply Prometheus, Grafana and Alertmanager configs:
 ```
 kubectl apply -f k8s/utils/monitoring/servicemonitors.yaml
 kubectl apply -f k8s/utils/monitoring/prometheusrule-app-alerts.yaml
@@ -67,7 +67,7 @@ kubectl apply -f k8s/utils/monitoring/alertmanager-config.yaml
 kubectl apply -f k8s/utils/monitoring/grafana-dashboard.yaml
 kubectl apply -f k8s/utils/monitoring/grafana-datasource.yaml
 ```
-- ### Check if metrics-server is Ready:
+- ### Check if metrics-server is Ready and Patch:
 ```
 kubectl -n kube-system get pods -l k8s-app=metrics-server -o wide
 
@@ -88,28 +88,27 @@ kubectl top pods -A
 ```
 kubectl apply -f argocd/app.yaml
 ```
-- ### Check that all Pods are Ready:
+- ### Check that all the Pods are Ready:
 ```
 kubectl get pods -A
 ```
 - ### After Pods are Ready access on browser:
 ##### **App**
 - **Frontend**: `http://localhost/` -- `/metrics`, `/healthz`
-- **Errors API**: `http://localhost/api` -- `/metrics`, `/healthz`
-- **Latency API**: `http://localhost/latency` -- `/metrics`, `/healthz`
+- **Errors API**: `http://localhost/api`
+- **Latency API**: `http://localhost/latency`
 ##### **Prometheus, Alerts and Grafana**
 - **Prometheus**: `http://prometheus.localhost/`
 - **Prometheus Alerts**: `http://prometheus.localhost/alerts`
 - **Grafana**: `http://grafana.localhost/`
 ```
 # Grafana default access: admin / admin
-# Apply manualy Grafana main custom dashboard using json file (Dashboards -- New -- import -- use: ./k8s/utils/monitoring/dashboards/app-all-in-one.json)
+# Apply manualy Grafana main custom dashboard using a `.json` file (Dashboards -- New -- import -- use: ./k8s/utils/monitoring/dashboards/app-all-in-one.json)
 ```
 ##### **Argo CD**
 ```
 http://argocd.localhost/
-```
-```
+
 # user: admin
 # password: kubectl -n utils get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
