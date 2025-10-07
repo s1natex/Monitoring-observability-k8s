@@ -22,14 +22,14 @@ kubectl wait -n ingress-nginx --for=condition=Available deploy/ingress-nginx-con
 kubectl get pods -n ingress-nginx -o wide
 kubectl get svc -n ingress-nginx
 ```
-- ### Deploy Cluster:
+- ### Deploy the Cluster:
 ```
 kubectl apply -f k8s/apps/deployments.yaml
 kubectl apply -f k8s/apps/services.yaml
 kubectl apply -f k8s/apps/hpas.yaml
 kubectl apply -f k8s/apps/ingress-apps.yaml
 ```
-- ### Install and Run Argo CD:
+- ### Install and Run ArgoCD:
 ```
 kubectl apply -n utils -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
@@ -84,7 +84,7 @@ kubectl get apiservices | grep metrics
 kubectl top nodes
 kubectl top pods -A
 ```
-- ### Run Argo CD Application:
+- ### Run ArgoCD Application:
 ```
 kubectl apply -f argocd/app.yaml
 ```
